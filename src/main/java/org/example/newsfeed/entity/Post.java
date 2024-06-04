@@ -14,7 +14,10 @@ public class Post extends BaseEntity{
     @Column(nullable = false)
     private Long id;
 
-    private Long userId; // long?
+    @Column(nullable = false)
+    private Long userId; // ?
+
+
     private String content;
 
     @Builder
