@@ -56,14 +56,12 @@ public class UserController {
         } catch (DuplicateUserException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("errorCode", "400");
-            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
-            errorResponse.put("details", "중복된 사용자가 존재합니다.");
+            errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 중복된 사용자가 존재합니다.");
             return ResponseEntity.badRequest().body(errorResponse);
         } catch (InvalidPasswordException e) {
             Map<String, Object> errorResponse = new HashMap<>();
             errorResponse.put("errorCode", "422");
-            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
-            errorResponse.put("details", "비밀번호 형식이 올바르지 않습니다.");
+            errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 비밀번호 형식이 올바르지 않습니다.");
             return ResponseEntity.unprocessableEntity().body(errorResponse);
         }
 
