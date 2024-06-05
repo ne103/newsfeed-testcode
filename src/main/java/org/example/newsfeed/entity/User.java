@@ -38,10 +38,8 @@ public class User {
     @Column(nullable = false)
     private String comment;
 
-
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private UserStatusEnum status;
+    private String status;
 
     @Column(nullable = false)
     private String refreshToken;
@@ -65,7 +63,7 @@ public class User {
 
 
     public User(String userId, String password,
-        UserStatusEnum status) {
+        String  status) {
         this.userId = userId;
         this.password = password;
         this.status = status;

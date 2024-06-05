@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.dto.WithdrawRequestDto;
 import org.example.newsfeed.entity.User;
-import org.example.newsfeed.entity.User.UserStatus;
 import org.example.newsfeed.entity.UserStatusEnum;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.UserIdNotFoundException;
@@ -27,29 +26,6 @@ public class UserService {
         this.passwordEncoder = passwordEncoder;
     }
 
-    public void signup(SignupRequestDto requestDto) {
-        String user_id = requestDto.getUser_id();
-        String password = passwordEncoder.encode(requestDto.getPassword());
-
-        // 사용자 ID 유효성 검사
-        validateUserId(requestDto.getUser_id());
-
-        // 비밀번호 유효성 검사
-        validatePassword(requestDto.getPassword());
-
-        // 중복 ID 체크
-        Optional<User> checkUser_id = userRepository.findByUserId(user_id);
-        if (checkUser_id.isPresent()) {
-            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
-        }
-
-        // 회원가입
-        User user = new User();
-        user.setUserId(requestDto.getUser_id());
-        user.setPassword(password);
-        user.setStatus(UserStatusEnum.ACTIVE);
-        userRepository.save(user);
-    }
 
     // 사용자 ID 유효성 검사
     private void validateUserId(String userId) {
@@ -90,11 +66,33 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
-        //회원 탈퇴
-        user.setDeleted(true);
-        user.setStatus(UserStatusEnum.);
-        userRepository.save(user);
+        //회원 탈퇴(db에서 완전히 삭제)
+        user.setStatus(UserStatusEnum.WITHDRAWN.name());
+        userRepository.delete(user);
+    }
 
+    public void signup(SignupRequestDto requestDto) {
+        String userId = requestDto.getUserId();
+        String password = passwordEncoder.encode(requestDto.getPassword());
+
+        // 사용자 ID 유효성 검사
+        validateUserId(userId);
+
+        // 비밀번호 유효성 검사
+        validatePassword(password);
+
+        // 중복 ID 체크
+        Optional<User> checkUser_id = userRepository.findByUserId(userId);
+        if (checkUser_id.isPresent()) {
+            throw new IllegalArgumentException("중복된 사용자가 존재합니다.");
+        }
+
+        // 회원가입 (회원 상태 ACTIVE로 설정)
+        User user = new User();
+        user.setUserId(requestDto.getUserId());
+        user.setPassword(password);
+        user.setStatus(UserStatusEnum.ACTIVE.name());
+        userRepository.save(user);
     }
 
 
