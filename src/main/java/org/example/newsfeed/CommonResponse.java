@@ -8,6 +8,7 @@ import lombok.Setter;
 @Setter
 @Builder
 public class CommonResponse {
+
     private Integer statusCode;
     private String msg;
 }

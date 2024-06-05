@@ -37,20 +37,19 @@ public class PostController {
         Post post = postService.updatePost(postId, dto);
         //PostResponseDTO response = new PostResponseDTO(post);
         return ResponseEntity.ok().body(CommonResponse.builder()
-                .msg("게시글 수정에 성공했습니다")
-                .statusCode(HttpStatus.OK.value())
-                .build());
+            .msg("게시글 수정에 성공했습니다")
+            .statusCode(HttpStatus.OK.value())
+            .build());
     }
-
 
 
     @DeleteMapping("{postId}")
     public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
         return ResponseEntity.ok().body(CommonResponse.builder()
-                .msg("게시글 삭제에 성공했습니다")
-                .statusCode(HttpStatus.OK.value())
-                .build());
+            .msg("게시글 삭제에 성공했습니다")
+            .statusCode(HttpStatus.OK.value())
+            .build());
     }
 
 }

@@ -19,7 +19,7 @@ public class PostService {
 
     public Post updatePost(Long postId, PostRequestDTO dto) {
 
-        Post post = postRepository.findById(postId).orElseThrow(IllegalAccessError::new);
+        Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE).orElseThrow(IllegalAccessError::new);
 
         post.setContent(dto.getContent());
 
@@ -28,12 +28,14 @@ public class PostService {
     }
 
     public void deletePost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(IllegalAccessError::new);
-        postRepository.delete(post);
+        Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE).orElseThrow(IllegalAccessError::new);
+        post.setDeleted();
+        postRepository.save(post);
+        //postRepository.delete(post);
     }
 
     public Post getPost(Long postId) {
-        Post post = postRepository.findById(postId).orElseThrow(IllegalAccessError::new);
+        Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE).orElseThrow(IllegalAccessError::new);
         return post;
 
     }

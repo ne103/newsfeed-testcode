@@ -13,9 +13,9 @@ public class PostRequestDTO {
 
     public Post toEntity() {
         return Post.builder()
-                .userId(userId)
-                .content(content)
-                .build();
+            .userId(userId)
+            .content(content)
+            .build();
 
     }
 }

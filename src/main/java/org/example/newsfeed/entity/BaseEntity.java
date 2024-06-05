@@ -16,7 +16,7 @@ import java.sql.Timestamp;
 public class BaseEntity {
 
     @CreationTimestamp
-    @Column(name = "created_at",updatable = false)
+    @Column(name = "created_at", updatable = false)
     private Timestamp createdAt;
 
     @UpdateTimestamp

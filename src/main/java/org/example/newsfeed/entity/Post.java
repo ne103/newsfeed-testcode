@@ -8,7 +8,8 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-public class Post extends BaseEntity{
+public class Post extends BaseEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
@@ -20,6 +21,8 @@ public class Post extends BaseEntity{
 
     private String content;
 
+    private boolean deleted = Boolean.FALSE;
+
     @Builder
     public Post(Long userId, String content) {
         this.userId = userId;
@@ -27,6 +30,9 @@ public class Post extends BaseEntity{
 
     }
 
+    public void setDeleted(){
+        this.deleted = Boolean.TRUE;
+    }
     public void setContent(String content) {
         this.content = content;
     }
