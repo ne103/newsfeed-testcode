@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 public class SignupRequestDto {
     @NotBlank
-    private String user_id;
+    private String userId;
     @NotBlank
     private String password;
 }
