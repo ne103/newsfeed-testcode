@@ -1,32 +1,36 @@
 package org.example.newsfeed.entity;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.hibernate.validator.constraints.Length;
+import lombok.experimental.SuperBuilder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
-import java.sql.Timestamp;
-
 @Entity
 @Getter
-@Setter
 @NoArgsConstructor
-@Table(name = "user")
+//@SuperBuilder
+@Table(name = "users")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // Java에서는 Camel case 적용, name설정함으로써 sql에서는 Snake case 적용
-    @Length(min = 10, max = 20)
-    @Column(name = "user_id", nullable = false, unique = true)
+    @Column(nullable = false, unique = true)
     private String userId;
 
-    @Length(min = 10)
     @Column(nullable = false)
     private String password;
 
@@ -60,7 +64,9 @@ public class User {
 
 
     public User(String userId, String password) {
-        this.userId = userId ;
+        this.userId = userId;
         this.password = password;
     }
+
+
 }
