@@ -1,18 +1,26 @@
 package org.example.newsfeed.controller;
 
 import jakarta.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.entity.User;
+import org.example.newsfeed.exception.DuplicateUserException;
+import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.service.UserService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
 @Controller
@@ -30,19 +38,39 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
+    public ResponseEntity<?> signup(@Valid SignupRequestDto requestDto, BindingResult bindingResult) {
         // Validation 예외처리 (유효성)
-        List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-        if (fieldErrors.size() > 0) {
-            for (FieldError fieldError : bindingResult.getFieldErrors()) {
-                log.error(fieldError.getField() + " 필드 : " + fieldError.getDefaultMessage());
-            }
-            return "redirect:/api/signup";
+        if (bindingResult.hasErrors()) {
+            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("errorCode", "400");
+            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
+            errorResponse.put("details", fieldErrors.stream()
+                .map(FieldError::getDefaultMessage)
+                .collect(Collectors.joining(", ")));
+            return ResponseEntity.badRequest().body(errorResponse);
         }
-        userService.signup(requestDto);
 
-        return "redirect :/api/login";
+        try {
+            userService.signup(requestDto);
+        } catch (DuplicateUserException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("errorCode", "400");
+            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
+            errorResponse.put("details", "중복된 사용자가 존재합니다.");
+            return ResponseEntity.badRequest().body(errorResponse);
+        } catch (InvalidPasswordException e) {
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("errorCode", "422");
+            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
+            errorResponse.put("details", "비밀번호 형식이 올바르지 않습니다.");
+            return ResponseEntity.unprocessableEntity().body(errorResponse);
+        }
 
+        Map<String, Object> successResponse = new HashMap<>();
+        successResponse.put("statusCode", "200");
+        successResponse.put("message", "회원가입에 성공하였습니다.");
+        return ResponseEntity.ok(successResponse);
     }
 
 }
