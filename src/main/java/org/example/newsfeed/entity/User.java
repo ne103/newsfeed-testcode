@@ -38,14 +38,20 @@ public class User {
     @Column(nullable = false)
     private String comment;
 
+
     @Column(nullable = false)
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private UserStatusEnum status;
 
     @Column(nullable = false)
     private String refreshToken;
 
     @Column(nullable = false)
     private String statusChangeTime;
+
+    //회원 탈퇴
+    @Column(nullable = false)
+    private boolean deleted;
 
     @CreatedDate
     private Timestamp createDate;
@@ -57,10 +63,14 @@ public class User {
     private ArrayList<Newsfeed> newsfeeds;
 
 
-    public User(String userId, String password) {
+
+    public User(String userId, String password,
+        UserStatusEnum status) {
         this.userId = userId;
         this.password = password;
+        this.status = status;
     }
+
 
 
 }
