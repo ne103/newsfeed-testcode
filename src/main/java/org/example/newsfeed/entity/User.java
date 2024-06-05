@@ -10,6 +10,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
@@ -19,7 +20,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 @Entity
 @Getter
 @NoArgsConstructor
-//@SuperBuilder
+@SuperBuilder
 @Table(name = "users")
 public class User {
 
@@ -60,13 +61,11 @@ public class User {
     private Timestamp modifyDate;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private ArrayList<Newsfeed> newsfeeds;
+    private List<Newsfeed> newsfeeds;
 
 
     public User(String userId, String password) {
         this.userId = userId;
         this.password = password;
     }
-
-
 }
