@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.sql.Timestamp;
@@ -29,7 +28,8 @@ public class User {
     @Column(nullable = false)
     private String name;
 
-    @Column(nullable = false)
+    // 이메일 값도 중복되면 안되어서 유니크 걸어두었어요
+    @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -48,8 +48,14 @@ public class User {
     private Timestamp createDate;
 
     @LastModifiedDate
-    private String modifyDate;
+    private Timestamp modifyDate;
 
+    public User(String user_id, String password, String email) {
+        this.user_id = user_id;
+        this.password = password;
+        this.email = email;
+
+    }
 
 
 }
