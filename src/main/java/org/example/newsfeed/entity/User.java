@@ -1,6 +1,7 @@
 package org.example.newsfeed.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,14 +14,15 @@ import java.sql.Timestamp;
 @Getter
 @Setter
 @NoArgsConstructor
-@Table
+@Table(name = "user")
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
-    private String user_id;
+    // Java에서는 Camel case 적용, name설정함으로써 sql에서는 Snake case 적용
+    @Column(name = "user_id", nullable = false, unique = true)
+    private String userId;
 
     @Column(nullable = false)
     private String password;
@@ -50,8 +52,12 @@ public class User {
     @LastModifiedDate
     private Timestamp modifyDate;
 
-    public User(String user_id, String password, String email) {
-        this.user_id = user_id;
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    private ArrayList<Newsfeed> newsfeeds;
+
+
+    public User(String userId, String password, String email) {
+        this.userId = userId ;
         this.password = password;
         this.email = email;
 
