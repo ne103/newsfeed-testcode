@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 @NoArgsConstructor
 @Table(name = "user")
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,7 +32,7 @@ public class User {
     private String name;
 
     // 이메일 값도 중복되면 안되어서 유니크 걸어두었어요
-    @Column(nullable = false, unique = true)
+    @Column(unique = true)
     private String email;
 
     @Column(nullable = false)
@@ -56,11 +57,9 @@ public class User {
     private ArrayList<Newsfeed> newsfeeds;
 
 
-    public User(String userId, String password, String email) {
-        this.userId = userId ;
+    public User(String userId, String password) {
+        this.userId = userId;
         this.password = password;
-        this.email = email;
-
     }
 
 
