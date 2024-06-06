@@ -17,13 +17,7 @@ public class UserService {
 
     public User getUser(Long id) {
         return userRepository.findById(id).orElseThrow(
-            () -> new IllegalArgumentException("ㅠㅠ..ㅠㅠ..............ㅠㅠ..아이디가..없저..")
-        );
-    }
-
-    public User findById(Long id) {
-        return userRepository.findById(id).orElseThrow(
-            () -> new IllegalArgumentException("ㅠㅠ..ㅠㅠ..............ㅠㅠ..아이디가..없저..")
+            () -> new IllegalArgumentException("해당하는 아이디가 존재하지 않습니다.")
         );
     }
 }
