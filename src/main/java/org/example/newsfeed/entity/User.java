@@ -1,6 +1,7 @@
 package org.example.newsfeed.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,27 +29,27 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String name;
 
-    // 이메일 값도 중복되면 안되어서 유니크 걸어두었어요
+    @Email
     @Column(unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String comment;
 
-    @Column(nullable = false)
+    @Column
     private String status;
 
-    @Column(nullable = false)
+    @Column
     private String refreshToken;
 
-    @Column(nullable = false)
+    @Column
     private String statusChangeTime;
 
     //회원 탈퇴
-    @Column(nullable = false)
+    @Column
     private boolean deleted;
 
     @CreatedDate
