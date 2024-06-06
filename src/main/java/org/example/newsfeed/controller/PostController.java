@@ -4,8 +4,10 @@ import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
 import org.example.newsfeed.dto.PostRequestDTO;
 import org.example.newsfeed.dto.PostResponseDTO;
+import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.service.PostService;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -50,6 +52,14 @@ public class PostController {
             .msg("게시글 삭제에 성공했습니다")
             .statusCode(HttpStatus.OK.value())
             .build());
+    }
+
+    @GetMapping("/page")
+    public Page<PostResponseDTO> getPostPage(
+        @RequestParam("page") int page, //페이지 번호 1부터
+        @RequestParam("search") boolean canSearch,  //기간별 검색 기능 사용할지
+        @RequestBody(required = false) SearchRequestDTO dto) { //기간
+        return postService.getPosts(page - 1, canSearch, dto);
     }
 
 }
