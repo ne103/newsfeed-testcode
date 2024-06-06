@@ -48,9 +48,13 @@ public class User {
     @Column
     private String statusChangeTime;
 
+    @Column(name = "role", nullable = false)
+    @Enumerated(value = EnumType.STRING)
+    private UserRoleEnum role;
+
     //회원 탈퇴
-   @Column(name = "withdrawn", nullable = false)
-   private boolean withdrawn;
+    @Column(name = "withdrawn", nullable = false)
+    private boolean withdrawn;
 
     @CreatedDate
     private Timestamp createDate;
@@ -61,15 +65,9 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private ArrayList<Newsfeed> newsfeeds;
 
-
-
-    public User(String userId, String password,
-        String  status) {
+    public User(String userId, String password, String status) {
         this.userId = userId;
         this.password = password;
         this.status = status;
     }
-
-
-
 }
