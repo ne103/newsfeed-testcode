@@ -49,8 +49,8 @@ public class User {
     private String statusChangeTime;
 
     //회원 탈퇴
-    @Column
-    private boolean deleted;
+   @Column(name = "withdrawn", nullable = false)
+   private boolean withdrawn;
 
     @CreatedDate
     private Timestamp createDate;
