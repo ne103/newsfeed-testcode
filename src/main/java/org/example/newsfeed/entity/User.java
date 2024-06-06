@@ -14,6 +14,7 @@ import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import org.example.newsfeed.dto.UserRequestDTO;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -67,5 +68,10 @@ public class User {
     public User(String userId, String password) {
         this.userId = userId;
         this.password = password;
+    }
+
+    public void updateUser(UserRequestDTO dto) {
+        this.userId = dto.getUserId();
+        this.comment = dto.getComment();
     }
 }

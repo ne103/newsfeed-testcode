@@ -15,6 +15,8 @@ import lombok.ToString;
 @Builder
 public class UserRequestDTO {
 
+        private String userId;
+
         @NotBlank
         private String password;
 
