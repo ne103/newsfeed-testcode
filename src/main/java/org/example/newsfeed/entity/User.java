@@ -8,6 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.example.newsfeed.dto.UserRequestDTO;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -30,9 +32,11 @@ public class User {
     private Long id;
 
     // Java에서는 Camel case 적용, name설정함으로써 sql에서는 Snake case 적용
+    @Length(min = 10, max = 20)
     @Column(nullable = false, unique = true)
     private String userId;
 
+    @Length(min = 10)
     @Column(nullable = false)
     private String password;
 
