@@ -8,6 +8,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     @Query("SELECT u FROM User u WHERE u.userId = :userId")
-    Optional<User> findByUserId(@Param("userId") String userId);
-
+    Optional<User> findByUserIdAndStatus(@Param("userId") String userId, @Param("status") String status);
+    Optional<User> findByUserId(String userId);
 }
