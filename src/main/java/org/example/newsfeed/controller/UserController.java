@@ -11,6 +11,7 @@ import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.exception.DuplicateUserException;
 import org.example.newsfeed.exception.InvalidPasswordException;
+import org.example.newsfeed.exception.UserErrorCode;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +41,10 @@ public class UserController {
 
     @PostMapping("/signup")
     public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
-        // Validation 예외처리 (유효성)
         if (bindingResult.hasErrors()) {
             List<FieldError> fieldErrors = bindingResult.getFieldErrors();
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", "400");
+            errorResponse.put("errorCode", UserErrorCode.INVALID_PASSWORD_FORMAT);
             errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
             errorResponse.put("details", fieldErrors.stream()
                 .map(FieldError::getDefaultMessage)
@@ -56,12 +56,12 @@ public class UserController {
             userService.signup(requestDto);
         } catch (DuplicateUserException e) {
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", "400");
+            errorResponse.put("errorCode", UserErrorCode.DUPLICATE_USER);
             errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 중복된 사용자가 존재합니다.");
             return ResponseEntity.badRequest().body(errorResponse);
         } catch (InvalidPasswordException e) {
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", "422");
+            errorResponse.put("errorCode", UserErrorCode.INVALID_PASSWORD);
             errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 비밀번호 형식이 올바르지 않습니다.");
             return ResponseEntity.unprocessableEntity().body(errorResponse);
         }
@@ -71,5 +71,4 @@ public class UserController {
         successResponse.put("message", "회원가입에 성공하였습니다.");
         return ResponseEntity.ok(successResponse);
     }
-
 }
