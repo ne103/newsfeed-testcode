@@ -19,6 +19,7 @@ import java.sql.Timestamp;
 public class User {
 
     @Id
+    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

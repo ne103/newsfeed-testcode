@@ -22,16 +22,18 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
-@Controller
+@RestController
 @AllArgsConstructor
 @RequestMapping("/api")
 public class UserController {
 
     private final UserService userService;
 
+    //restcontroller로 바꿔주기!
 
     //회원가입 페이지 -> html파일 강의에서 쓰던거 쓸 것인가 추후 정하기
     @GetMapping("/signup")
@@ -39,36 +41,27 @@ public class UserController {
         return "signup";
     }
 
-    @PostMapping("/signup")
-    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto, BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            List<FieldError> fieldErrors = bindingResult.getFieldErrors();
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", UserErrorCode.INVALID_PASSWORD_FORMAT);
-            errorResponse.put("errorMessage", "회원가입에 실패하였습니다.");
-            errorResponse.put("details", fieldErrors.stream()
-                .map(FieldError::getDefaultMessage)
-                .collect(Collectors.joining(", ")));
-            return ResponseEntity.badRequest().body(errorResponse);
-        }
 
-        try {
+    @PostMapping("/signup")
+    public ResponseEntity<?> signup(@Valid @RequestBody SignupRequestDto requestDto) {
+        try{
             userService.signup(requestDto);
         } catch (DuplicateUserException e) {
             Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", UserErrorCode.DUPLICATE_USER);
+            errorResponse.put("errorCode", "400");
             errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 중복된 사용자가 존재합니다.");
-            return ResponseEntity.badRequest().body(errorResponse);
-        } catch (InvalidPasswordException e) {
-            Map<String, Object> errorResponse = new HashMap<>();
-            errorResponse.put("errorCode", UserErrorCode.INVALID_PASSWORD);
-            errorResponse.put("errorMessage", "회원가입에 실패하였습니다. 비밀번호 형식이 올바르지 않습니다.");
             return ResponseEntity.unprocessableEntity().body(errorResponse);
         }
 
-        Map<String, Object> successResponse = new HashMap<>();
+        Map<String,Object> successResponse = new HashMap<>();
         successResponse.put("statusCode", "200");
         successResponse.put("message", "회원가입에 성공하였습니다.");
         return ResponseEntity.ok(successResponse);
+
     }
+
+
+
+
+
 }
