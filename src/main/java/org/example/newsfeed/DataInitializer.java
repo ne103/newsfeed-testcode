@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class DataInitializer {
 
-
     private JdbcTemplate jdbcTemplate;
 
     @PostConstruct
