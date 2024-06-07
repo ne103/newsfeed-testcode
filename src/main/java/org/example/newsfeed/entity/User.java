@@ -78,4 +78,8 @@ public class User {
         this.userId = dto.getUserId();
         this.comment = dto.getComment();
     }
+
+    public void updatePassword(UserRequestDTO dto) {
+        this.userId = dto.getPassword();
+    }
 }

@@ -29,4 +29,12 @@ public class UserService {
         );
         user.updateUser(dto);
     }
+
+    @Transactional
+    public void updatePassword(Long id, UserRequestDTO dto) {
+        User user = userRepository.findById(id).orElseThrow(
+            () -> new IllegalArgumentException("해당하는 아이디가 존재하지 않습니다.")
+        );
+        user.updatePassword(dto);
+    }
 }
