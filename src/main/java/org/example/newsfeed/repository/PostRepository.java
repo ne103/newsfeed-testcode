@@ -12,10 +12,11 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     Optional<Post> findByIdAndDeleted(Long postId, Boolean deleted);
 
-    void deleteByDeleted(Boolean deleted);
-
     List<Post> findByDeleted(Boolean deleted);
 
-    Page<Post> findAllByCreatedAtGreaterThanEqualAndCreatedAtLessThan(Timestamp timestamp, Timestamp timestamp1, Pageable pageable);
+    Page<Post> findAllByDeleted(Boolean deleted, Pageable pageable);
+
+    Page<Post> findAllByDeletedAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(Boolean aFalse, Timestamp timestamp,
+        Timestamp timestamp1, Pageable pageable);
 }
 

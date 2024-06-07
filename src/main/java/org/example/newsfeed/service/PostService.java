@@ -59,11 +59,11 @@ public class PostService {
         Pageable pageable = PageRequest.of(page, 10, sort); //각 페이지 당 뉴스피드 데이터가 10개씩
         Page<Post> posts;
         if (!canSearch) {   //전체조회
-            posts = postRepository.findAll(pageable);
+            posts = postRepository.findAllByDeleted(Boolean.FALSE, pageable); // 삭제 안된 게시물 불러오기
         } else {
-            posts = postRepository.findAllByCreatedAtGreaterThanEqualAndCreatedAtLessThan(
+            posts = postRepository.findAllByDeletedAndCreatedAtGreaterThanEqualAndCreatedAtLessThan(Boolean.FALSE,
                 firstDateToTimestamp(dto.getFirstDate()), lastDateToTimestamp(dto.getLastDate()),
-                pageable);
+                pageable);  //삭제 안된 게시물, 기간별 검색
         }
         return posts.map(post -> new PostResponseDTO(post));
     }
