@@ -12,20 +12,26 @@ import jakarta.validation.constraints.Min;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.example.newsfeed.dto.PasswordRequestDTO;
 import org.example.newsfeed.dto.UserRequestDTO;
+import org.example.newsfeed.exception.InvalidPasswordException;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Getter
+@AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @SuperBuilder
 @Table(name = "users")
-public class User {
+public class User extends Timestamped{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -59,23 +65,20 @@ public class User {
     @Column(nullable = false)
     private String statusChangeTime;
 
-    @CreatedDate
-    private Timestamp createDate;
-
-    @LastModifiedDate
-    private Timestamp modifyDate;
-
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private List<Newsfeed> newsfeeds;
 
 
-    public User(String userId, String password) {
-        this.userId = userId;
-        this.password = password;
-    }
-
     public void updateUser(UserRequestDTO dto) {
         this.userId = dto.getUserId();
         this.comment = dto.getComment();
+    }
+
+    public void updatePassword(PasswordRequestDTO dto) {
+        if (this.password.equals(dto.getBeforePassword())) {
+            this.password = dto.getUpdatePassword();
+        }else{
+            throw new InvalidPasswordException("패스워드가 일치하지 않습니다.");
+        }
     }
 }

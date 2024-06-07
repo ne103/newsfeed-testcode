@@ -17,7 +17,7 @@ public class UserRequestDTO {
 
         private String userId;
 
-        @NotBlank
+        @NotBlank(message = "Password cannot be Blank")
         private String password;
 
         @NotBlank
@@ -28,4 +28,6 @@ public class UserRequestDTO {
         @Email
         private String email;
 
-    }
+
+}
+
