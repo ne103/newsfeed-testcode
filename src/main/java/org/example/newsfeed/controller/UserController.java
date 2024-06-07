@@ -1,10 +1,12 @@
 package org.example.newsfeed.controller;
 
 import lombok.AllArgsConstructor;
+import org.example.newsfeed.dto.PasswordRequestDTO;
 import org.example.newsfeed.dto.UserRequestDTO;
 import org.example.newsfeed.dto.UserResponseDTO;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.dto.ErrorResponseDTO;
+import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.UserErrorCode;
 import org.example.newsfeed.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("/api")
+@RequestMapping("/api/profile")
 public class UserController {
 
     public final UserService userService;
@@ -38,18 +40,17 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // 내 프로필 수정 (이름, 이메일, 한 줄 소개)
+    // 내 프로필 수정 (이름, 한 줄 소개)
     @PutMapping("/{id}")
     public ResponseEntity updateUser(@PathVariable Long id, @RequestBody UserRequestDTO dto) {
         userService.updateUser(id, dto);
         return ResponseEntity.ok().body("프로필 수정에 성공하셨습니다.");
     }
 
-        // 내 비밀번호 수정
+    // 내 비밀번호 수정
     @PutMapping("/{id}/password")
-    public ResponseEntity updatePassword(@PathVariable Long id, @RequestBody UserRequestDTO dto) {
+    public ResponseEntity updatePassword(@PathVariable Long id, @RequestBody PasswordRequestDTO dto) {
         userService.updatePassword(id, dto);
         return ResponseEntity.ok().body("비밀번호 수정에 성공하였습니다.");
-
     }
 }
