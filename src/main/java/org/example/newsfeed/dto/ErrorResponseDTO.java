@@ -1,4 +1,4 @@
-package org.example.newsfeed.exception;
+package org.example.newsfeed.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
@@ -11,7 +11,7 @@ import org.springframework.validation.FieldError;
 @Getter
 @Builder
 @RequiredArgsConstructor
-public class ErrorResponse {
+public class ErrorResponseDTO {
 
     private final String code;
     private final String message;
