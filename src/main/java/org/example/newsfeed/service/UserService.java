@@ -1,6 +1,5 @@
 package org.example.newsfeed.service;
 
-import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.dto.WithdrawRequestDto;
 import org.example.newsfeed.entity.User;
@@ -8,7 +7,6 @@ import org.example.newsfeed.entity.UserStatusEnum;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.UserIdNotFoundException;
 import org.example.newsfeed.repository.UserRepository;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,10 +29,9 @@ public class UserService {
         if (userId.length() < 10 || userId.length() > 20) {
             throw new IllegalArgumentException("사용자 ID는 최소 10글자 이상, 최대 20글자 이하여야 합니다.");
         }
-
-//        if (!userId.matches("a-zA-Z0-9")) {
-//            throw new IllegalArgumentException("사용자 ID는 대소문자 포함 영문 + 숫자만을 허용합니다.");
-//        }
+        if (!userId.matches("[a-zA-Z0-9]+")) {
+            throw new IllegalArgumentException("사용자 ID는 대소문자 포함 영문, 숫자만을 허용합니다.");
+        }
     }
 
     // 비밀번호 유효성 검사
@@ -42,14 +39,12 @@ public class UserService {
         if (password.length() < 10) {
             throw new IllegalArgumentException("비밀번호는 최소 10글자 이상이어야 합니다.");
         }
+    String passwordRegax = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$";
+        if (!password.matches(passwordRegax)) {
+            throw new IllegalArgumentException("비밀번호는 대소문자 포함 영문, 숫자, 특수문자를 최소 1글자씩 포함해야 합니다.");
+        }
 
-//        if (!password.matches(
-//            "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$"
-//        )) {
-//            throw new IllegalArgumentException("비밀번호는 대소문자 포함 영문 + 숫자 + 특수문자를 최소 1글자씩 포함해야 합니다.");
-//        }
     }
-
 
     private String encodePassword(String password) {
         return passwordEncoder.encode(password);
@@ -65,7 +60,7 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
-        //회원 탈퇴 및 상태 변경 (db에 남겨야함 soft 삭제 -> 회원상태코드를 바꾸기(상태변경시간도 남기려면,,))
+        //회원 탈퇴 및 상태 변경 ( 회원상태코드를 바꾸기(상태변경시간도 남기려면,,))
         user.setStatus(UserStatusEnum.WITHDRAWN.name());
         userRepository.save(user);
     }
@@ -98,6 +93,20 @@ public class UserService {
     //Active상태만 조회
     Optional<User> findByUserIdAndStatus(String userId, String status) {
         return userRepository.findByUserIdAndStatus(userId, status);
+    }
+
+
+    private boolean isExistingOrWithdrawnId(String userId) {
+        Optional<User> existingUser = userRepository.findByUserId(userId);
+        if (existingUser.isPresent()) {
+            return true; // 중복된 ID
+        }
+
+        User withdrawnUser = userRepository.findByUserIdAndWithdrawn(userId, true);
+        if (withdrawnUser != null) {
+            return true; // 탈퇴한 ID
+        }
+        return false; // 사용가능한 ID
     }
 
 
