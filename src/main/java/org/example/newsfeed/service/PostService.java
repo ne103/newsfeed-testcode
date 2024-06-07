@@ -29,21 +29,33 @@ public class PostService {
         return postRepository.save(newPost);
     }
 
-    public Post updatePost(Long postId, PostRequestDTO dto) {
+    public Post updatePost(Long postId, PostRequestDTO dto, User user) {
 
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
             .orElseThrow(IllegalAccessError::new);
 
-        post.setContent(dto.getContent());
+        if(post.getUserId().equals(user.getId())){  //유저 아이디가 일치하면 수정
+            post.setContent(dto.getContent());
+        }
+        else{
+            throw new IllegalArgumentException();//exception
+        }
+
 
         return postRepository.save(post);
 
     }
 
-    public void deletePost(Long postId) {
+    public void deletePost(Long postId, User user) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
             .orElseThrow(IllegalAccessError::new);
-        post.setDeleted();
+        if(post.getUserId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
+            post.setDeleted();
+        }
+        else{
+            throw new IllegalArgumentException();//exception
+        }
+
         postRepository.save(post);
         //postRepository.delete(post);
     }

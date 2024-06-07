@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@RequestMapping("api/posts")
+@RequestMapping("/api/posts")
 public class PostController {
 
     public final PostService postService;
@@ -37,8 +37,8 @@ public class PostController {
 
 
     @PutMapping("{postId}")
-    public ResponseEntity updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO dto) {
-        Post post = postService.updatePost(postId, dto);
+    public ResponseEntity updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Post post = postService.updatePost(postId, dto, userDetails.getUser());
         //PostResponseDTO response = new PostResponseDTO(post);
         return ResponseEntity.ok().body(CommonResponse.builder()
             .msg("게시글 수정에 성공했습니다")
@@ -48,8 +48,8 @@ public class PostController {
 
 
     @DeleteMapping("{postId}")
-    public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId) {
-        postService.deletePost(postId);
+    public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        postService.deletePost(postId, userDetails.getUser());
         return ResponseEntity.ok().body(CommonResponse.builder()
             .msg("게시글 삭제에 성공했습니다")
             .statusCode(HttpStatus.OK.value())
