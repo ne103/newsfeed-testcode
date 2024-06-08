@@ -1,11 +1,14 @@
 package org.example.newsfeed.service;
 
+import java.util.regex.Pattern;
 import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.dto.WithdrawRequestDto;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.entity.UserRoleEnum;
 import org.example.newsfeed.entity.UserStatusEnum;
+import org.example.newsfeed.exception.AlreadyWithdrawnUserException;
 import org.example.newsfeed.exception.InvalidPasswordException;
+import org.example.newsfeed.exception.PasswordMismatchException;
 import org.example.newsfeed.exception.UserIdNotFoundException;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,8 +43,8 @@ public class UserService {
         if (password.length() < 10) {
             throw new IllegalArgumentException("비밀번호는 최소 10글자 이상이어야 합니다.");
         }
-    String passwordRegax = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$";
-        if (!password.matches(passwordRegax)) {
+
+        if (Pattern.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,}$", password)) {
             throw new IllegalArgumentException("비밀번호는 대소문자 포함 영문, 숫자, 특수문자를 최소 1글자씩 포함해야 합니다.");
         }
 
@@ -61,7 +64,7 @@ public class UserService {
             throw new InvalidPasswordException("비밀번호가 일치하지 않습니다.");
         }
 
-        //회원 탈퇴 및 상태 변경 ( 회원상태코드를 바꾸기(상태변경시간도 남기려면,,))
+        //회원 탈퇴 및 상태 변경
         user.setStatus(UserStatusEnum.WITHDRAWN.name());
         userRepository.save(user);
     }
@@ -73,8 +76,8 @@ public class UserService {
         // 사용자 ID 유효성 검사
         validateUserId(userId);
 
-//        // 비밀번호 유효성 검사
-//        validatePassword(password);
+        // 비밀번호 유효성 검사
+        validatePassword(password);
 
         // 중복 ID 체크
         Optional<User> checkUser_id = userRepository.findByUserIdAndStatus(requestDto.getUserId(),
@@ -84,7 +87,8 @@ public class UserService {
         }
 
         // 회원가입 (회원 상태 ACTIVE로 설정)
-        User user = new User(requestDto.getUserId(), requestDto.getPassword(),UserStatusEnum.ACTIVE.name(),
+        User user = new User(requestDto.getUserId(), requestDto.getPassword(),
+            UserStatusEnum.ACTIVE.name(),
             UserRoleEnum.USER);
         userRepository.save(user);
     }
@@ -101,13 +105,27 @@ public class UserService {
             return true; // 중복된 ID
         }
 
-        User withdrawnUser = userRepository.findByUserIdAndWithdraw(userId, true);
-        if (withdrawnUser != null) {
-            return true; // 탈퇴한 ID
-        }
+         // *************************** 탈퇴한 ID => Status가 Active인 걸 찾으면 되잖어~
+
         return false; // 사용가능한 ID
     }
 
+
+    public void withdrawUser(String userId, String password) {
+        User user = userRepository.findByUserId(userId)
+            .orElseThrow(() -> new UserIdNotFoundException("존재하지 않는 이용자입니다."));
+
+        if (user.isWithdraw()) {
+            throw new AlreadyWithdrawnUserException("이미 탈퇴된 사용자입니다.");
+        }
+
+        if (!user.getPassword().equals(password)) {
+            throw new PasswordMismatchException("비밀번호가 일치하지 않습니다.");
+        }
+
+        user.withdraw();
+        userRepository.save(user);
+    }
 
 }
 

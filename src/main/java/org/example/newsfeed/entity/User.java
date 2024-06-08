@@ -3,6 +3,7 @@ package org.example.newsfeed.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -55,7 +56,7 @@ public class User {
 
     //회원 탈퇴
     @Column(name = "withdrawn", nullable = false)
-    private boolean withdraw;
+    public boolean withdraw;
 
     @CreatedDate
     private Timestamp createDate;
@@ -63,13 +64,17 @@ public class User {
     @LastModifiedDate
     private Timestamp modifyDate;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-    private ArrayList<Newsfeed> newsfeeds;
+    @OneToMany(mappedBy = "user")
+    private List<Newsfeed> newsfeeds;
 
     public User(String userId, String password, String status, UserRoleEnum role) {
         this.userId = userId;
         this.password = password;
         this.status = status;
         this.role = role;
+    }
+
+    public void withdraw() {
+        this.withdraw = true;
     }
 }
