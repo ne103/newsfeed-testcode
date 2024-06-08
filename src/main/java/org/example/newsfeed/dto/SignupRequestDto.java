@@ -14,5 +14,6 @@ public class SignupRequestDto {
     private String password;
     private String email;
     private String comment;
+    private boolean withdraw;
 
 }

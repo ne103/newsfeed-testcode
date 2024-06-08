@@ -55,7 +55,7 @@ public class User {
 
     //회원 탈퇴
     @Column(name = "withdrawn", nullable = false)
-    private boolean withdrawn;
+    private boolean withdraw;
 
     @CreatedDate
     private Timestamp createDate;
@@ -66,9 +66,10 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private ArrayList<Newsfeed> newsfeeds;
 
-    public User(String userId, String password, String status) {
+    public User(String userId, String password, String status, UserRoleEnum role) {
         this.userId = userId;
         this.password = password;
         this.status = status;
+        this.role = role;
     }
 }
