@@ -3,6 +3,7 @@ package org.example.newsfeed.service;
 import org.example.newsfeed.dto.SignupRequestDto;
 import org.example.newsfeed.dto.WithdrawRequestDto;
 import org.example.newsfeed.entity.User;
+import org.example.newsfeed.entity.UserRoleEnum;
 import org.example.newsfeed.entity.UserStatusEnum;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.UserIdNotFoundException;
@@ -72,8 +73,8 @@ public class UserService {
         // 사용자 ID 유효성 검사
         validateUserId(userId);
 
-        // 비밀번호 유효성 검사
-        validatePassword(password);
+//        // 비밀번호 유효성 검사
+//        validatePassword(password);
 
         // 중복 ID 체크
         Optional<User> checkUser_id = userRepository.findByUserIdAndStatus(requestDto.getUserId(),
@@ -83,10 +84,8 @@ public class UserService {
         }
 
         // 회원가입 (회원 상태 ACTIVE로 설정)
-        User user = new User();
-        user.setUserId(requestDto.getUserId());
-        user.setPassword(password);
-        user.setStatus(UserStatusEnum.ACTIVE.name());
+        User user = new User(requestDto.getUserId(), requestDto.getPassword(),UserStatusEnum.ACTIVE.name(),
+            UserRoleEnum.USER);
         userRepository.save(user);
     }
 
@@ -102,7 +101,7 @@ public class UserService {
             return true; // 중복된 ID
         }
 
-        User withdrawnUser = userRepository.findByUserIdAndWithdrawn(userId, true);
+        User withdrawnUser = userRepository.findByUserIdAndWithdraw(userId, true);
         if (withdrawnUser != null) {
             return true; // 탈퇴한 ID
         }
