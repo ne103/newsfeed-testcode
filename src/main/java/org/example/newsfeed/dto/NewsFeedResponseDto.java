@@ -11,6 +11,7 @@ public class NewsFeedResponseDto {
 
     public NewsFeedResponseDto(int statusCode, String message) {
         this.message = message;
+        this.statusCode = statusCode;
     }
 
 }
