@@ -16,6 +16,6 @@ public class NewsFeedService {
     private final NewsFeedRepository newsFeedRepository;
 
     public List<NewsFeed> getAllNewsFeeds() {
-        return newsFeedRepository.findAllByOrderByCreateDateDesc();
+        return newsFeedRepository.findAll();
     }
 }

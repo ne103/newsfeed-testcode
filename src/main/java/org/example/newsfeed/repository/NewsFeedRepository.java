@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NewsFeedRepository extends JpaRepository<NewsFeed, Long> {
-    List<NewsFeed> findAllByOrderByCreateDateDesc();
+    List<NewsFeed> findAll();
 
 }
