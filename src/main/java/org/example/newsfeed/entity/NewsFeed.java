@@ -26,9 +26,7 @@ public class NewsFeed {
     @Column(nullable = true)
     private String content;
 
-    @Column(name = "create_date", nullable = false)
+    @Column(updatable = false)
     private LocalDateTime create_date;
-
-    @Column(name = "create_date", nullable = false)
     private LocalDateTime modify_date;
 }
