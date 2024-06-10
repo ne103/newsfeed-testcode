@@ -7,7 +7,8 @@ import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
 import org.example.newsfeed.dto.CommentRequestDTO;
 import org.example.newsfeed.dto.CommentResponseDTO;
-import org.example.newsfeed.dto.ErrorResponseDto;
+import org.example.newsfeed.dto.ErrorResponseDTO;
+import org.example.newsfeed.dto.ErrorResponseDTO2;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.exception.CommentNotFoundException;
 import org.example.newsfeed.exception.InvalidUserException;
@@ -44,7 +45,7 @@ public class CommentController {
             response = ResponseEntity.ok(new CommentResponseDTO(comment));
         } catch (PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "댓글 작성에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "댓글 작성에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -62,7 +63,7 @@ public class CommentController {
             response = ResponseEntity.ok(responseList);
         } catch (PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "댓글 조회에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "댓글 조회에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -81,7 +82,7 @@ public class CommentController {
                 .build());
         } catch (CommentNotFoundException | PostNotFoundException | InvalidUserException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "댓글 수정에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "댓글 수정에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -102,7 +103,7 @@ public class CommentController {
 
         } catch (CommentNotFoundException | PostNotFoundException | InvalidUserException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "댓글 삭제에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "댓글 삭제에 실패했습니다.", e.getMessage()));
         }
 
         return response;

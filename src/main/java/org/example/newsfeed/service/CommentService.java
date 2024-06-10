@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import org.example.newsfeed.dto.CommentRequestDTO;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.entity.Post;
+import org.example.newsfeed.entity.User;
 import org.example.newsfeed.exception.CommentNotFoundException;
 import org.example.newsfeed.exception.InvalidUserException;
 import org.example.newsfeed.exception.PostNotFoundException;

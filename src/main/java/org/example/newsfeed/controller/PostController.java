@@ -2,7 +2,7 @@ package org.example.newsfeed.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
-import org.example.newsfeed.dto.ErrorResponseDto;
+import org.example.newsfeed.dto.ErrorResponseDTO2;
 import org.example.newsfeed.dto.PostRequestDTO;
 import org.example.newsfeed.dto.PostResponseDTO;
 import org.example.newsfeed.dto.SearchRequestDTO;
@@ -38,9 +38,9 @@ public class PostController {
         try {
             Post post = postService.getPost(postId);
             response = ResponseEntity.ok(new PostResponseDTO(post));
-        } catch (PostNotFoundException e){
+        } catch (PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 조회에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "게시글 조회에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -60,7 +60,7 @@ public class PostController {
                 .build());
         } catch (InvalidUserException | PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 수정에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "게시글 수정에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -82,7 +82,7 @@ public class PostController {
 
         } catch (InvalidUserException | PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -95,5 +95,6 @@ public class PostController {
         @RequestBody(required = false) SearchRequestDTO dto) { //기간
         return postService.getPosts(page - 1, canSearch, dto);
     }
+
 
 }

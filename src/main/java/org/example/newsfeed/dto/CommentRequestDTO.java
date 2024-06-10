@@ -2,6 +2,7 @@ package org.example.newsfeed.dto;
 
 import lombok.Getter;
 import org.example.newsfeed.entity.Comment;
+import org.example.newsfeed.entity.User;
 
 @Getter
 public class CommentRequestDTO {
