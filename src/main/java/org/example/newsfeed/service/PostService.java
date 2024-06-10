@@ -10,6 +10,7 @@ import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.exception.InvalidUserException;
+import org.example.newsfeed.exception.PostNotFoundException;
 import org.example.newsfeed.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +34,7 @@ public class PostService {
     public Post updatePost(Long postId, PostRequestDTO dto, User user) {
 
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
 
         if(post.getUser().getId().equals(user.getId())){  //유저 아이디가 일치하면 수정
             post.setContent(dto.getContent());
@@ -49,7 +50,7 @@ public class PostService {
 
     public void deletePost(Long postId, User user) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
         if(post.getUser().getId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
             post.setDeleted();
         }
@@ -63,7 +64,7 @@ public class PostService {
 
     public Post getPost(Long postId) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(()->new PostNotFoundException("해당 게시글이 존재하지 않습니다."));
         return post;
 
     }
