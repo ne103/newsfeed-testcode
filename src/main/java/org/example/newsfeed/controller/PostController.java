@@ -50,7 +50,7 @@ public class PostController {
                 .msg("게시글 수정에 성공했습니다")
                 .statusCode(HttpStatus.OK.value())
                 .build());
-        } catch (Exception e) {
+        } catch (InvalidUserException e) {
             response = ResponseEntity.ok().body(
                 new ErrorResponseDto("403", "게시글 수정에 실패했습니다.", e.getMessage()));
         }
@@ -72,7 +72,7 @@ public class PostController {
                 .statusCode(HttpStatus.OK.value())
                 .build());
 
-        } catch (Exception e) {
+        } catch (InvalidUserException e) {
             response = ResponseEntity.ok().body(
                 new ErrorResponseDto("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
         }
