@@ -32,7 +32,7 @@ public class CommentController {
     @PostMapping
     public ResponseEntity postComment(@PathVariable Long postId, @RequestBody CommentRequestDTO dto,
         @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Comment comment = commentService.creatComment(postId, dto, userDetails.getUser().getId());
+        Comment comment = commentService.creatComment(postId, dto, userDetails.getUser());
         CommentResponseDTO response = new CommentResponseDTO(comment);
         return ResponseEntity.ok(response);
     }
