@@ -1,5 +1,7 @@
 package org.example.newsfeed.security;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.example.newsfeed.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -8,6 +10,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import java.util.ArrayList;
 import java.util.Collection;
 
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
@@ -32,7 +36,6 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-//        UserRoleEnum role = user.getRole();
         String authority = "default";
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
