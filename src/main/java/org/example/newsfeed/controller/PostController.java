@@ -2,12 +2,11 @@ package org.example.newsfeed.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
-import org.example.newsfeed.dto.ErrorResponseDto;
 import org.example.newsfeed.dto.PostRequestDTO;
 import org.example.newsfeed.dto.PostResponseDTO;
 import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
-import org.example.newsfeed.exception.InvalidUserException;
+import org.example.newsfeed.exception.CommonErrorResponseDTO;
 import org.example.newsfeed.security.UserDetailsImpl;
 import org.example.newsfeed.service.PostService;
 import org.springframework.data.domain.Page;
@@ -52,7 +51,7 @@ public class PostController {
                 .build());
         } catch (Exception e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 수정에 실패했습니다.", e.getMessage()));
+                new CommonErrorResponseDTO("403", "게시글 수정에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -74,7 +73,7 @@ public class PostController {
 
         } catch (Exception e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
+                new CommonErrorResponseDTO("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
         }
 
         return response;

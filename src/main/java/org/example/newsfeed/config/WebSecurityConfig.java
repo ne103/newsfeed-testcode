@@ -1,6 +1,6 @@
 package org.example.newsfeed.config;
 
-import org.example.newsfeed.jwt.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.jwt.JwtAuthorizationFilter;
 import org.example.newsfeed.jwt.JwtUtil;
 import org.example.newsfeed.security.UserDetailsServiceImpl;
@@ -18,6 +18,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @Configuration
 @EnableWebSecurity // Spring Security 지원을 가능하게 함
+@RequiredArgsConstructor
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class WebSecurityConfig {
 
@@ -25,11 +26,6 @@ public class WebSecurityConfig {
     private final UserDetailsServiceImpl userDetailsService;
     private final AuthenticationConfiguration authenticationConfiguration;
 
-    public WebSecurityConfig(JwtUtil jwtUtil, UserDetailsServiceImpl userDetailsService, AuthenticationConfiguration authenticationConfiguration) {
-        this.jwtUtil = jwtUtil;
-        this.userDetailsService = userDetailsService;
-        this.authenticationConfiguration = authenticationConfiguration;
-    }
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
@@ -51,34 +47,24 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         // CSRF 설정
-        http.csrf((csrf) -> csrf.disable());
+        http.csrf(csrf -> csrf.disable());
 
-        // 기본 설정인 Session 방식은 사용하지 않고 JWT 방식을 사용하기 위한 설정
-        http.sessionManagement((sessionManagement) ->
+        // 세션 관리 설정
+        http.sessionManagement(sessionManagement ->
             sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
         );
 
-        http.authorizeHttpRequests((authorizeHttpRequests) ->
+        // 요청에 대한 권한 설정
+        http.authorizeHttpRequests(authorizeHttpRequests ->
             authorizeHttpRequests
-                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // resources 접근 허용 설정
-                .requestMatchers("/api/**").permitAll() // '/api'로 시작하는 요청 모두 접근 허가
+                .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스 접근 허용 설정
+                .requestMatchers("/api/**").permitAll() // '/api'로 시작하는 요청 모두 접근 허가 (테스트용)
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
-//        http.formLogin((formLogin) ->
-//            formLogin
-//                .loginPage("/api/login").permitAll()
-//        );
-
-        // 필터 관리
+        // 필터 설정
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
 //        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-        //접근 불가 페이지
-        http.exceptionHandling((exceptionHandling)->
-            exceptionHandling
-                .accessDeniedPage("/forbidden.html")
-        );
 
         return http.build();
     }

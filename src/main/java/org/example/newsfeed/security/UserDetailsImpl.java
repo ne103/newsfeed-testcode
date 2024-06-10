@@ -3,11 +3,14 @@ package org.example.newsfeed.security;
 import java.util.ArrayList;
 import java.util.Collection;
 import org.example.newsfeed.entity.User;
-import org.example.newsfeed.entity.UserRoleEnum;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+@Getter
+@Setter
 public class UserDetailsImpl implements UserDetails {
 
     private final User user;
@@ -27,13 +30,13 @@ public class UserDetailsImpl implements UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getName();
+        return user.getUserId();
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        UserRoleEnum role = user.getRole();
-        String authority = role.getAuthority();
+
+        String authority = "default";
 
         SimpleGrantedAuthority simpleGrantedAuthority = new SimpleGrantedAuthority(authority);
         Collection<GrantedAuthority> authorities = new ArrayList<>();

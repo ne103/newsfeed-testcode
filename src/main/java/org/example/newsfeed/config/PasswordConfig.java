@@ -11,7 +11,7 @@ public class PasswordConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
 
-//        return new BCryptPasswordEncoder();
-        return new TestEncoder(); // 회원가입 코딩이 끝나면 위의 주석으로 바꿔야함
+        return new BCryptPasswordEncoder();
+//        return new TestEncoder(); // 회원가입 코딩이 끝나면 위의 주석으로 바꿔야함
     }
 }
