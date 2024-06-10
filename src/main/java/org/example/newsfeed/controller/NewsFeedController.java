@@ -4,7 +4,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.dto.NewsFeedResponseDto;
-import org.example.newsfeed.entity.NewsFeed;
+import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.service.NewsFeedService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +21,7 @@ public class NewsFeedController {
 
     @GetMapping("/newsfeed")
     public ResponseEntity<?> getAllNewsFeeds() {
-        List<NewsFeed> newsFeeds = newsFeedService.getAllNewsFeeds();
+        List<Post> newsFeeds = newsFeedService.getAllNewsFeeds();
         if (newsFeeds.isEmpty()) {
             NewsFeedResponseDto response = new NewsFeedResponseDto(200, "먼저 작성하여 소식을 알려보세요");
             return ResponseEntity.ok(response);

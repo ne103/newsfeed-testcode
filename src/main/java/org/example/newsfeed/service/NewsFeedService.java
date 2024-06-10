@@ -3,9 +3,9 @@ package org.example.newsfeed.service;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.newsfeed.entity.NewsFeed;
+import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.repository.NewsFeedRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -15,7 +15,7 @@ public class NewsFeedService {
 
     private final NewsFeedRepository newsFeedRepository;
 
-    public List<NewsFeed> getAllNewsFeeds() {
-        return newsFeedRepository.findAll();
+    public List<Post> getAllNewsFeeds() {
+        return newsFeedRepository.findAll(Sort.by(Sort.Direction.DESC, "createdAt"));
     }
 }

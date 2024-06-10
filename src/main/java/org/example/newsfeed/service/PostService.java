@@ -49,7 +49,7 @@ public class PostService {
 
     public void deletePost(Long postId, User user) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalArgumentException::new);
+            .orElseThrow(IllegalAccessError::new);
         if(post.getUser().getId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
             post.setDeleted();
         }
