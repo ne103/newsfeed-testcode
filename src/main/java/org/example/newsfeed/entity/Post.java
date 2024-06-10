@@ -1,6 +1,8 @@
 package org.example.newsfeed.entity;
 
 import jakarta.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,8 +17,6 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Long id;
 
-//    @Column(nullable = false)
-//    private Long userId; // ?
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -25,6 +25,9 @@ public class Post extends BaseEntity {
     private String content;
 
     private boolean deleted = Boolean.FALSE;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL) //영속성전이
+    private List<Comment> comments = new ArrayList<Comment>();
 
     @Builder
     public Post(User user, String content) {
