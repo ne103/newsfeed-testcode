@@ -39,10 +39,10 @@ public class CommentController {
         @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
         ResponseEntity response;
-        try{
+        try {
             Comment comment = commentService.creatComment(postId, dto, userDetails.getUser());
-            response =ResponseEntity.ok( new CommentResponseDTO(comment));
-        }catch(PostNotFoundException e){
+            response = ResponseEntity.ok(new CommentResponseDTO(comment));
+        } catch (PostNotFoundException e) {
             response = ResponseEntity.ok().body(
                 new ErrorResponseDto("403", "댓글 작성에 실패했습니다.", e.getMessage()));
         }
@@ -52,12 +52,20 @@ public class CommentController {
 
     @GetMapping
     public ResponseEntity getComments(@PathVariable Long postId) { //댓글 조회
-        List<Comment> comments = commentService.getComments(postId);
+        ResponseEntity response;
+        try {
+            List<Comment> comments = commentService.getComments(postId);
 
-        List<CommentResponseDTO> response = comments.stream()
-            .map(CommentResponseDTO::new)
-            .collect(Collectors.toList());
-        return ResponseEntity.ok(response);
+            List<CommentResponseDTO> responseList = comments.stream()
+                .map(CommentResponseDTO::new)
+                .collect(Collectors.toList());
+            response = ResponseEntity.ok(responseList);
+        } catch (PostNotFoundException e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "댓글 조회에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
     @PutMapping("/{commentId}") //댓글 내용 수정
@@ -71,7 +79,7 @@ public class CommentController {
                 .msg("댓글 수정에 성공했습니다.")
                 .statusCode(HttpStatus.OK.value())
                 .build());
-        } catch (CommentNotFoundException | InvalidUserException e) {
+        } catch (CommentNotFoundException | PostNotFoundException | InvalidUserException e) {
             response = ResponseEntity.ok().body(
                 new ErrorResponseDto("403", "댓글 수정에 실패했습니다.", e.getMessage()));
         }
@@ -92,7 +100,7 @@ public class CommentController {
                 .statusCode(HttpStatus.OK.value())
                 .build());
 
-        } catch (CommentNotFoundException | InvalidUserException e) {
+        } catch (CommentNotFoundException | PostNotFoundException | InvalidUserException e) {
             response = ResponseEntity.ok().body(
                 new ErrorResponseDto("403", "댓글 삭제에 실패했습니다.", e.getMessage()));
         }

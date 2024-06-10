@@ -24,7 +24,8 @@ public class CommentService {
 
     public Comment creatComment(Long postId, CommentRequestDTO dto, User user) {
         var newComment = dto.toEntity(user);
-        Post post = postRepository.findById(postId).orElseThrow(()->new PostNotFoundException("해당 게시물이 존재하지 않습니다."));
+        Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
+            .orElseThrow(() -> new PostNotFoundException("해당 게시물이 존재하지 않습니다."));
         newComment.setPost(post);
         return commentRepository.save(newComment);
 
@@ -32,14 +33,25 @@ public class CommentService {
     }
 
     public List<Comment> getComments(Long postId) {
-        return commentRepository.findAllByPostId(postId);
+
+        if (postRepository.findByIdAndDeleted(postId, Boolean.FALSE).isPresent()) {
+            return commentRepository.findAllByPostId(postId);
+        }else{
+            throw new PostNotFoundException("해당 게시물이 존재하지 않습니다.");
+        }
+
 
     }
 
     public Comment updateComment(Long commentId, CommentRequestDTO dto, User user) {
 
         Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(()->new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
+            .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
+
+        if (postRepository.findByIdAndDeleted(comment.getPost().getId(), Boolean.FALSE).isEmpty()) {
+            throw new PostNotFoundException("해당 게시물이 존재하지 않습니다."); // 게시물 삭제되어있으면 댓글 작성 x
+        }
+
 
         if (comment.getUser().getId().equals(user.getId())) {
             comment.setContent(dto.getContent());
@@ -53,11 +65,15 @@ public class CommentService {
     public void deleteComment(Long commentId, User user) {
 
         Comment comment = commentRepository.findById(commentId)
-            .orElseThrow(()->new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
-        if(comment.getUser().getId().equals(user.getId())) {
-            commentRepository.delete(comment);
+            .orElseThrow(() -> new CommentNotFoundException("해당 댓글이 존재하지 않습니다."));
+
+        if (postRepository.findByIdAndDeleted(comment.getPost().getId(), Boolean.FALSE).isEmpty()) {
+            throw new PostNotFoundException("해당 게시물이 존재하지 않습니다."); // 게시물 삭제되어있으면 댓글 삭제x
         }
-        else{
+
+        if (comment.getUser().getId().equals(user.getId())) {
+            commentRepository.delete(comment);
+        } else {
             throw new InvalidUserException("작성자가 아닙니다.");
         }
 
