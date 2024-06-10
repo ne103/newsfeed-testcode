@@ -25,7 +25,7 @@ import org.hibernate.validator.constraints.Length;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 
 @Entity
@@ -100,14 +100,15 @@ public class User extends Timestamped{
     }
 
     public void updateUser(UserRequestDTO dto) {
-        this.userId = dto.getUserId();
+        this.name = dto.getName();
         this.comment = dto.getComment();
     }
 
-    public void updatePassword(PasswordRequestDTO dto) {
-        if (this.password.equals(dto.getBeforePassword())) {
-            this.password = dto.getUpdatePassword();
-        }else{
+    public void updatePassword(PasswordRequestDTO dto, BCryptPasswordEncoder passwordEncoder) {
+
+        if (passwordEncoder.matches(dto.getBeforePassword(), this.password)) {
+            this.password = passwordEncoder.encode(dto.getUpdatePassword());
+        } else {
             throw new InvalidPasswordException("패스워드가 일치하지 않습니다.");
         }
     }

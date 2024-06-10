@@ -1,7 +1,6 @@
 package org.example.newsfeed.controller;
 
 
-
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -10,7 +9,6 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.cookie.CookieUtil;
-import org.example.newsfeed.dto.ErrorResponseDTO;
 import org.example.newsfeed.dto.LoginRequestDTO;
 import org.example.newsfeed.dto.PasswordRequestDTO;
 import org.example.newsfeed.dto.ResponseDTO;
@@ -20,19 +18,23 @@ import org.example.newsfeed.dto.UserResponseDTO;
 import org.example.newsfeed.dto.WithdrawRequestDTO;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.exception.AlreadyWithdrawnUserException;
+import org.example.newsfeed.exception.CommonErrorResponseDTO;
 import org.example.newsfeed.exception.DuplicateUserException;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.InvalidTokenException;
-import org.example.newsfeed.exception.CommonErrorResponseDTO;
 import org.example.newsfeed.exception.PasswordMismatchException;
-import org.example.newsfeed.exception.UserErrorCode;
 import org.example.newsfeed.exception.UserIdNotFoundException;
 import org.example.newsfeed.exception.UserNotFoundException;
 import org.example.newsfeed.jwt.JwtUtil;
+import org.example.newsfeed.security.UserDetailsImpl;
 import org.example.newsfeed.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -99,33 +101,43 @@ public class UserController {
 
 
     // 내 프로필 조회
-    @GetMapping("/profile/{id}")
-    public ResponseEntity getUser(@PathVariable Long id) {
-        User user;
+    @GetMapping("/profile")
+    public ResponseEntity<?> getUser(
+        @AuthenticationPrincipal UserDetailsImpl userDetails
+    ) {
+        User user = new User();
         try {
-            user = userService.getUser(id);
+            user = userService.getUser(userDetails.getUser().getId());
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(ErrorResponseDTO.builder()
-                .code(String.valueOf(UserErrorCode.USER_NOT_FOUND.getHttpStatus().value()))
-                .message(UserErrorCode.USER_NOT_FOUND.getMessage())
-                .build());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new CommonErrorResponseDTO("400", "프로필 조회에 실패하였습니다.", e.getMessage()));
         }
         UserResponseDTO response = new UserResponseDTO(user);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.toString(), null, response));
     }
 
     // 내 프로필 수정 (이름, 한 줄 소개)
-    @PutMapping("profile/{id}")
-    public ResponseEntity updateUser(@PathVariable Long id, @RequestBody UserRequestDTO dto) {
-        userService.updateUser(id, dto);
-        return ResponseEntity.ok().body("프로필 수정에 성공하셨습니다.");
+    @PutMapping("/profile")
+    public ResponseEntity<?> updateUser( @AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody UserRequestDTO dto) {
+        try {
+            userService.updateUser(userDetails.getUser().getId(), dto);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new CommonErrorResponseDTO("400", "프로필 수정에 실패하였습니다.", e.getMessage()));
+        }
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.toString(), "프로필 수정에 성공하셨습니다.", null));
     }
 
     // 내 비밀번호 수정
-    @PutMapping("profile/{id}/password")
-    public ResponseEntity updatePassword(@PathVariable Long id, @RequestBody PasswordRequestDTO dto) {
-        userService.updatePassword(id, dto);
-        return ResponseEntity.ok().body("비밀번호 수정에 성공하였습니다.");
+    @PutMapping("/profile/password")
+    public ResponseEntity<?> updatePassword(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PasswordRequestDTO dto) {
+        try {
+            userService.updatePassword(userDetails.getUser().getId(), dto);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new CommonErrorResponseDTO("400", "비밀번호 수정에 실패하였습니다.", e.getMessage()));
+        }
+        return ResponseEntity.ok(new ResponseDTO<>(HttpStatus.OK.toString(), "비밀번호 수정에 성공하셨습니다.", null));
     }
 
 

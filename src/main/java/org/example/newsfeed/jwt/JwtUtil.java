@@ -201,7 +201,7 @@ public class JwtUtil {
     // JWT 토큰 substring
     public String substringToken(String tokenValue) {
         if (StringUtils.hasText(tokenValue)) {
-            return tokenValue;
+            return tokenValue.substring(7);
         }
         logger.error("Not Found Token");
         throw new NullPointerException("Not Found Token");
