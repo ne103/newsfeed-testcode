@@ -133,7 +133,7 @@ public class UserService {
             () -> new IllegalArgumentException("해당하는 아이디가 존재하지 않습니다.")
         );
         // 패스워드 비교 후 일치하면 변경
-        user.updatePassword(dto);
+        user.updatePassword(dto, passwordEncoder);
     }
 
     public Optional<User> findByUserId(String userId) {

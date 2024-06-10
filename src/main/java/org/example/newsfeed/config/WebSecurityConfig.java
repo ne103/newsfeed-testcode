@@ -1,6 +1,8 @@
 package org.example.newsfeed.config;
 
+import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
+import org.example.newsfeed.jwt.JwtAuthenticationFilter;
 import org.example.newsfeed.jwt.JwtAuthorizationFilter;
 import org.example.newsfeed.jwt.JwtUtil;
 import org.example.newsfeed.security.UserDetailsServiceImpl;
@@ -32,17 +34,19 @@ public class WebSecurityConfig {
         return configuration.getAuthenticationManager();
     }
 
-//    @Bean
-//    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
-//        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
-//        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
-//        return filter;
-//    }
+    @Bean
+    public JwtAuthenticationFilter jwtAuthenticationFilter() throws Exception {
+        JwtAuthenticationFilter filter = new JwtAuthenticationFilter(jwtUtil);
+        filter.setAuthenticationManager(authenticationManager(authenticationConfiguration));
+        return filter;
+    }
 
     @Bean
     public JwtAuthorizationFilter jwtAuthorizationFilter() {
         return new JwtAuthorizationFilter(jwtUtil, userDetailsService);
     }
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -58,13 +62,14 @@ public class WebSecurityConfig {
         http.authorizeHttpRequests(authorizeHttpRequests ->
             authorizeHttpRequests
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll() // 리소스 접근 허용 설정
-                .requestMatchers("/api/**").permitAll() // '/api'로 시작하는 요청 모두 접근 허가 (테스트용)
+                .requestMatchers("/api/signup").permitAll()
+                .requestMatchers("/api/login").permitAll() // '/api'로 시작하는 요청 모두 접근 허가 (테스트용)
                 .anyRequest().authenticated() // 그 외 모든 요청 인증처리
         );
 
         // 필터 설정
         http.addFilterBefore(jwtAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-//        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
