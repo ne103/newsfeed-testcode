@@ -7,7 +7,11 @@ import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
 import org.example.newsfeed.dto.CommentRequestDTO;
 import org.example.newsfeed.dto.CommentResponseDTO;
+import org.example.newsfeed.dto.ErrorResponseDto;
 import org.example.newsfeed.entity.Comment;
+import org.example.newsfeed.exception.CommentNotFoundException;
+import org.example.newsfeed.exception.InvalidUserException;
+import org.example.newsfeed.exception.PostNotFoundException;
 import org.example.newsfeed.security.UserDetailsImpl;
 import org.example.newsfeed.service.CommentService;
 import org.springframework.http.HttpStatus;
@@ -26,19 +30,28 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RequestMapping("api/posts/{postId}/comments")
 public class CommentController {
+
     public final CommentService commentService;
 
 
     @PostMapping
     public ResponseEntity postComment(@PathVariable Long postId, @RequestBody CommentRequestDTO dto,
-        @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Comment comment = commentService.creatComment(postId, dto, userDetails.getUser());
-        CommentResponseDTO response = new CommentResponseDTO(comment);
-        return ResponseEntity.ok(response);
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        ResponseEntity response;
+        try{
+            Comment comment = commentService.creatComment(postId, dto, userDetails.getUser());
+            response =ResponseEntity.ok( new CommentResponseDTO(comment));
+        }catch(PostNotFoundException e){
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "댓글 작성에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
     @GetMapping
-    public ResponseEntity getComments(@PathVariable Long postId){ //댓글 조회
+    public ResponseEntity getComments(@PathVariable Long postId) { //댓글 조회
         List<Comment> comments = commentService.getComments(postId);
 
         List<CommentResponseDTO> response = comments.stream()
@@ -48,26 +61,43 @@ public class CommentController {
     }
 
     @PutMapping("/{commentId}") //댓글 내용 수정
-    public ResponseEntity putComment(@PathVariable Long commentId,  @RequestBody CommentRequestDTO dto,
-        @AuthenticationPrincipal UserDetailsImpl userDetails){
-        Comment comment = commentService.updateComment(commentId, dto, userDetails.getUser().getId());
-        //CommentResponseDTO response = new CommentResponseDTO(comment);
-        return ResponseEntity.ok().body(CommonResponse.builder()
-            .msg("댓글 수정에 성공했습니다")
-            .statusCode(HttpStatus.OK.value())
-            .build());
+    public ResponseEntity putComment(@PathVariable Long commentId,
+        @RequestBody CommentRequestDTO dto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        ResponseEntity response;
+        try {
+            Comment comment = commentService.updateComment(commentId, dto, userDetails.getUser());
+            response = ResponseEntity.ok().body(CommonResponse.builder()
+                .msg("댓글 수정에 성공했습니다.")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+        } catch (CommentNotFoundException | InvalidUserException e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "댓글 수정에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
 
     @DeleteMapping("/{commentId}")
     public ResponseEntity deleteComment(@PathVariable Long commentId,
-        @AuthenticationPrincipal UserDetailsImpl userDetails){
-        commentService.deleteComment(commentId, userDetails.getUser().getId());
-        return ResponseEntity.ok().body(CommonResponse.builder()
-            .msg("댓글 삭제에 성공했습니다")
-            .statusCode(HttpStatus.OK.value())
-            .build());
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
+        ResponseEntity response;
+        try {
+            commentService.deleteComment(commentId, userDetails.getUser());
+            response = ResponseEntity.ok().body(CommonResponse.builder()
+                .msg("댓글 삭제에 성공했습니다.")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+
+        } catch (CommentNotFoundException | InvalidUserException e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "댓글 삭제에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
 
