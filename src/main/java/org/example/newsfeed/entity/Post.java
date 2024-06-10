@@ -15,17 +15,20 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Long id;
 
-    @Column(nullable = false)
-    private Long userId; // ?
+//    @Column(nullable = false)
+//    private Long userId; // ?
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;  // ?
 
     private String content;
 
     private boolean deleted = Boolean.FALSE;
 
     @Builder
-    public Post(Long userId, String content) {
-        this.userId = userId;
+    public Post(User user, String content) {
+        this.user = user;
         this.content = content;
 
     }

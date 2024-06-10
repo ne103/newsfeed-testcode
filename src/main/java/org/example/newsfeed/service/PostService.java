@@ -26,7 +26,7 @@ public class PostService {
 
     public Post createPost(PostRequestDTO dto, User user) {
 
-        var newPost = dto.toEntity(user.getId()); //userid 추가해서 post 생성
+        var newPost = dto.toEntity(user); //userid 추가해서 post 생성
         return postRepository.save(newPost);
     }
 
@@ -35,7 +35,7 @@ public class PostService {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
             .orElseThrow(IllegalArgumentException::new);
 
-        if(post.getUserId().equals(user.getId())){  //유저 아이디가 일치하면 수정
+        if(post.getUser().getId().equals(user.getId())){  //유저 아이디가 일치하면 수정
             post.setContent(dto.getContent());
         }
         else{
@@ -50,7 +50,7 @@ public class PostService {
     public void deletePost(Long postId, User user) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
             .orElseThrow(IllegalArgumentException::new);
-        if(post.getUserId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
+        if(post.getUser().getId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
             post.setDeleted();
         }
         else{
