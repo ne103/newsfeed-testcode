@@ -3,10 +3,11 @@ package org.example.newsfeed.repository;
 import java.util.Optional;
 import org.example.newsfeed.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUserId(String user_id);
-    Optional<User> findByUserIdAndStatus(String user_id, String status);
+@Repository
+public interface UserRepository extends JpaRepository<User,Long> {
+    Optional<User> findByUserId(String userId);
+    Optional<User> findByUserIdAndStatus(String userId, String status);
     Optional<User> findById(Long id);
-
 }

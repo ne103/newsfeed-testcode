@@ -26,6 +26,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+
+
 @Entity
 @Getter
 @AllArgsConstructor
@@ -38,8 +40,6 @@ public class User extends Timestamped{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    // Java에서는 Camel case 적용, name설정함으로써 sql에서는 Snake case 적용
 
     @Length(min = 10, max = 20)
     @Column(name = "user_id", nullable = false, unique = true)
@@ -78,7 +78,7 @@ public class User extends Timestamped{
     private LocalDateTime modifyDate;
 
     @OneToMany(mappedBy = "user")
-    private List<Newsfeed> newsfeeds = new ArrayList<>();
+    private List<Post> newsfeeds = new ArrayList<>();
 
     public void setStatus(UserStatusEnum status) {
         if (!status.getStatus().equals(this.status)) {
@@ -112,3 +112,4 @@ public class User extends Timestamped{
         }
     }
 }
+

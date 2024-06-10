@@ -1,7 +1,7 @@
 package org.example.newsfeed.security;
 
-import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.entity.User;
+import lombok.RequiredArgsConstructor;
 import org.example.newsfeed.entity.UserStatusEnum;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UserRepository userRepository;
+
 
     @Override
     public UserDetails loadUserByUsername(String userId) throws UsernameNotFoundException {
@@ -28,4 +29,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         return new UserDetailsImpl(user);
 
     }
-}
+    }
+
+

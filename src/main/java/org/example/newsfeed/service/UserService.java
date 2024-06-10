@@ -1,11 +1,12 @@
 package org.example.newsfeed.service;
 
+import java.sql.Timestamp;
 import java.util.Objects;
-import lombok.AllArgsConstructor;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.newsfeed.dto.PasswordRequestDTO;
-import org.example.newsfeed.dto.SignupRequestDto;
+import org.example.newsfeed.dto.SignupRequestDTO;
 import org.example.newsfeed.dto.UserRequestDTO;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.entity.UserStatusEnum;
@@ -13,19 +14,22 @@ import org.example.newsfeed.exception.AlreadyWithdrawnUserException;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.example.newsfeed.exception.PasswordMismatchException;
 import org.example.newsfeed.exception.UserIdNotFoundException;
+import org.example.newsfeed.exception.UserNotFoundException;
+import org.example.newsfeed.jwt.JwtUtil;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-@Slf4j
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class UserService {
-
     private final UserRepository userRepository;
     private static final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+    private final JwtUtil jwtUtil;
 
     // 비밀번호 암호화
     private String encodePassword(String password) {
@@ -33,7 +37,7 @@ public class UserService {
     }
 
     // 회원가입
-    public void signup(SignupRequestDto requestDto) {
+    public void signup(SignupRequestDTO requestDto) {
         String userId = requestDto.getUserId();
         String password = encodePassword(requestDto.getPassword());
 
@@ -130,6 +134,31 @@ public class UserService {
         );
         // 패스워드 비교 후 일치하면 변경
         user.updatePassword(dto);
+    }
+
+    public Optional<User> findByUserId(String userId) {
+        return userRepository.findByUserId(userId);
+    }
+
+    public boolean isWithdrawn(User user) {
+        return "탈퇴".equals(user.getStatus());
+    }
+
+    public String login(String userId, String password) {
+        Optional<User> userOpt = findByUserId(userId);
+        if (!userOpt.isPresent()) {
+            throw new InvalidPasswordException("아이디나 비밀번호가 일치하지 않습니다.");
+        }
+        User user = userOpt.get();
+
+        if (isWithdrawn(user)) {
+            throw new UserNotFoundException("탈퇴한 사용자입니다.");
+        }
+        if (!passwordEncoder.matches(password, user.getPassword())) {
+            throw new InvalidPasswordException("아이디나 비밀번호가 일치하지 않습니다.");
+        }
+
+        return user.getUserId(); // 인증 성공 시 사용자 ID 반환
     }
 
 }

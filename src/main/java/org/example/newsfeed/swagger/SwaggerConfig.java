@@ -1,4 +1,5 @@
 package org.example.newsfeed.swagger;
+
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class SwaggerConfig {
+
     @Bean
     public OpenAPI openAPI() {
         String jwt = "JWT";
@@ -20,17 +22,15 @@ public class SwaggerConfig {
             .bearerFormat("JWT")
         );
         return new OpenAPI()
-            .components(new Components())
+            .components(components)
             .info(apiInfo())
-            .addSecurityItem(securityRequirement)
-            .components(components);
+            .addSecurityItem(securityRequirement);
     }
+
     private Info apiInfo() {
         return new Info()
             .title("API Test") // API의 제목
             .description("Let's practice Swagger UI") // API에 대한 설명
             .version("1.0.0"); // API의 버전
-
-        //사용 URL: http://localhost:8080/swagger-ui.html
     }
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class WithdrawRequestDto {
+public class WithdrawRequestDTO {
     @NotBlank
     private String userId;
     @NotBlank
