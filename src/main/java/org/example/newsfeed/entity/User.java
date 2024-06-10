@@ -2,6 +2,7 @@ package org.example.newsfeed.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
@@ -9,18 +10,17 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
-
-import java.sql.Timestamp;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor
+@EntityListeners(AuditingEntityListener.class)
 @Table(name = "user")
-public class User {
+public class User extends Timestamped {
 
     @Id
-    @Column
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -45,36 +45,39 @@ public class User {
     private String status;
 
     @Column
+    @Setter
     private String refreshToken;
 
     @Column
     private String statusChangeTime;
 
-    @Column(name = "role", nullable = false)
-    @Enumerated(value = EnumType.STRING)
-    private UserRoleEnum role;
-
-    //회원 탈퇴
-    @Column(name = "withdrawn", nullable = false)
-    public boolean withdraw;
-
     @CreatedDate
-    private Timestamp createDate;
+    @Column(updatable = false)
+    private LocalDateTime createDate;
 
     @LastModifiedDate
-    private Timestamp modifyDate;
+    @Column
+    private LocalDateTime modifyDate;
 
     @OneToMany(mappedBy = "user")
-    private List<Newsfeed> newsfeeds;
+    private List<Newsfeed> newsfeeds = new ArrayList<>();
 
-    public User(String userId, String password, String status, UserRoleEnum role) {
-        this.userId = userId;
-        this.password = password;
-        this.status = status;
-        this.role = role;
+    public void setStatus(UserStatusEnum status) {
+        if (!status.getStatus().equals(this.status)) {
+            this.status = status.getStatus();
+            this.modifyDate = LocalDateTime.now();
+        }
     }
 
-    public void withdraw() {
-        this.withdraw = true;
+    public User(String userId, String password, String name, String email, String comment,
+        String refreshToken, String statusChangeTime, UserStatusEnum status) {
+        this.userId = userId;
+        this.password = password;
+        this.name = name;
+        this.email = email;
+        this.comment = comment;
+        this.refreshToken = refreshToken;
+        this.statusChangeTime = statusChangeTime;
+        this.status = status.getStatus();
     }
 }
