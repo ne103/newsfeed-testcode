@@ -2,10 +2,12 @@ package org.example.newsfeed.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
+import org.example.newsfeed.dto.ErrorResponseDto;
 import org.example.newsfeed.dto.PostRequestDTO;
 import org.example.newsfeed.dto.PostResponseDTO;
 import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
+import org.example.newsfeed.exception.InvalidUserException;
 import org.example.newsfeed.security.UserDetailsImpl;
 import org.example.newsfeed.service.PostService;
 import org.springframework.data.domain.Page;
@@ -22,8 +24,9 @@ public class PostController {
     public final PostService postService;
 
     @PostMapping
-    public ResponseEntity postPost(@RequestBody PostRequestDTO dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Post post = postService.createPost(dto,userDetails.getUser());
+    public ResponseEntity postPost(@RequestBody PostRequestDTO dto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        Post post = postService.createPost(dto, userDetails.getUser());
         PostResponseDTO response = new PostResponseDTO(post);
         return ResponseEntity.ok(response);
     }
@@ -37,23 +40,44 @@ public class PostController {
 
 
     @PutMapping("{postId}")
-    public ResponseEntity updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO dto, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        Post post = postService.updatePost(postId, dto, userDetails.getUser());
-        //PostResponseDTO response = new PostResponseDTO(post);
-        return ResponseEntity.ok().body(CommonResponse.builder()
-            .msg("게시글 수정에 성공했습니다")
-            .statusCode(HttpStatus.OK.value())
-            .build());
+    public ResponseEntity updatePost(@PathVariable Long postId, @RequestBody PostRequestDTO dto,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        ResponseEntity response;
+        try {
+            Post post = postService.updatePost(postId, dto, userDetails.getUser());
+            response = ResponseEntity.ok().body(CommonResponse.builder()
+                .msg("게시글 수정에 성공했습니다")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+        } catch (Exception e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "게시글 수정에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
 
     @DeleteMapping("{postId}")
-    public ResponseEntity<CommonResponse> deletePost(@PathVariable Long postId, @AuthenticationPrincipal UserDetailsImpl userDetails) {
-        postService.deletePost(postId, userDetails.getUser());
-        return ResponseEntity.ok().body(CommonResponse.builder()
-            .msg("게시글 삭제에 성공했습니다")
-            .statusCode(HttpStatus.OK.value())
-            .build());
+    public ResponseEntity deletePost(@PathVariable Long postId,
+        @AuthenticationPrincipal UserDetailsImpl userDetails) {
+
+        ResponseEntity response;
+
+        try {
+            postService.deletePost(postId, userDetails.getUser());
+            response = ResponseEntity.ok().body(CommonResponse.builder()
+                .msg("게시글 삭제에 성공했습니다")
+                .statusCode(HttpStatus.OK.value())
+                .build());
+
+        } catch (Exception e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDto("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
     @GetMapping("/page")

@@ -11,7 +11,7 @@ import java.sql.Timestamp;
 public class PostResponseDTO {
 
     private Long Id;
-    private Long userId;
+    private String userId;
     private String content;
     private Timestamp postDate;
     private Timestamp modifiedDate;
@@ -19,7 +19,7 @@ public class PostResponseDTO {
     public PostResponseDTO(Post post) {
 
         this.Id = post.getId();
-        this.userId = post.getUserId();
+        this.userId = post.getUser().getUserId();
         this.content = post.getContent();
         this.postDate = post.getCreatedAt();
         this.modifiedDate = post.getUpdatedAt();

@@ -9,6 +9,7 @@ import org.example.newsfeed.dto.PostResponseDTO;
 import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.entity.User;
+import org.example.newsfeed.exception.InvalidUserException;
 import org.example.newsfeed.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,20 +26,20 @@ public class PostService {
 
     public Post createPost(PostRequestDTO dto, User user) {
 
-        var newPost = dto.toEntity(user.getId()); //userid 추가해서 post 생성
+        var newPost = dto.toEntity(user); //userid 추가해서 post 생성
         return postRepository.save(newPost);
     }
 
     public Post updatePost(Long postId, PostRequestDTO dto, User user) {
 
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalAccessError::new);
+            .orElseThrow(IllegalArgumentException::new);
 
-        if(post.getUserId().equals(user.getId())){  //유저 아이디가 일치하면 수정
+        if(post.getUser().getId().equals(user.getId())){  //유저 아이디가 일치하면 수정
             post.setContent(dto.getContent());
         }
         else{
-            throw new IllegalArgumentException();//exception
+            throw new InvalidUserException("작성자가 아닙니다.");//exception
         }
 
 
@@ -48,12 +49,12 @@ public class PostService {
 
     public void deletePost(Long postId, User user) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalAccessError::new);
-        if(post.getUserId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
+            .orElseThrow(IllegalArgumentException::new);
+        if(post.getUser().getId().equals(user.getId())){ //유저 아이디가 일치하면 삭제
             post.setDeleted();
         }
         else{
-            throw new IllegalArgumentException();//exception
+            throw new InvalidUserException("작성자가 아닙니다.");//exception
         }
 
         postRepository.save(post);
@@ -62,7 +63,7 @@ public class PostService {
 
     public Post getPost(Long postId) {
         Post post = postRepository.findByIdAndDeleted(postId, Boolean.FALSE)
-            .orElseThrow(IllegalAccessError::new);
+            .orElseThrow(IllegalArgumentException::new);
         return post;
 
     }
