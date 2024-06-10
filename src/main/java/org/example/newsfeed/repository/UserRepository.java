@@ -5,7 +5,8 @@ import org.example.newsfeed.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long> {
-    Optional<User> findByUserIdAndStatus(String userId, String status);
-    Optional<User> findByUserId(String userId);
-    User findByUserIdAndWithdraw(String userId, boolean withdraw);
+    Optional<User> findByUserId(String user_id);
+    Optional<User> findByUserIdAndStatus(String user_id, String status);
+
+
 }
