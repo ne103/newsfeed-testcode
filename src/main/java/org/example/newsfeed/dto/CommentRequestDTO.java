@@ -6,10 +6,10 @@ import org.example.newsfeed.entity.Comment;
 @Getter
 public class CommentRequestDTO {
 
-    private Long userId;
+    //private Long userId;
     private String content;
 
-    public Comment toEntity() {
+    public Comment toEntity(Long userId) {
         return
             Comment.builder()
                 .userId(userId)
