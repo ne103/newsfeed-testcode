@@ -45,7 +45,16 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public void deleteComment(Long commentId) {
-        commentRepository.deleteById(commentId);
+    public void deleteComment(Long commentId, Long userId) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(IllegalArgumentException::new);
+        if(comment.getUserId().equals(userId)) {
+            commentRepository.delete(comment);
+        }
+        else{
+            throw new IllegalArgumentException();
+        }
+
+        //commentRepository.deleteById(commentId);
     }
 }
