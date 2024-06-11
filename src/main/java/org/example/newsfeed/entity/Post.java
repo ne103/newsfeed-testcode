@@ -29,7 +29,7 @@ public class Post extends BaseEntity {
     private boolean deleted = Boolean.FALSE;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL) //영속성전이
-    private List<Comment> comments = new ArrayList<Comment>();
+    private List<Comment> comments = new ArrayList<>();
 
     @Builder
     public Post(User user, String content) {

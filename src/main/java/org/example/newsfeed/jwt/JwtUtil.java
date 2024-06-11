@@ -200,11 +200,10 @@ public class JwtUtil {
 
     // JWT 토큰 substring
     public String substringToken(String tokenValue) {
-        if (StringUtils.hasText(tokenValue)) {
+        if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) {
             return tokenValue.substring(7);
         }
-        logger.error("Not Found Token");
-        throw new NullPointerException("Not Found Token");
+        return tokenValue;
     }
 
     // JWT Cookie 에 저장

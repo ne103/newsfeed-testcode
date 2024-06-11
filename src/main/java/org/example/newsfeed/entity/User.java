@@ -13,9 +13,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.example.newsfeed.dto.PasswordRequestDTO;
@@ -113,4 +117,3 @@ public class User extends Timestamped{
         }
     }
 }
-
