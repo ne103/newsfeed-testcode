@@ -2,12 +2,13 @@ package org.example.newsfeed.controller;
 
 import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
-import org.example.newsfeed.dto.ErrorResponseDto;
+import org.example.newsfeed.dto.ErrorResponseDTO2;
 import org.example.newsfeed.dto.PostRequestDTO;
 import org.example.newsfeed.dto.PostResponseDTO;
 import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.exception.InvalidUserException;
+import org.example.newsfeed.exception.PostNotFoundException;
 import org.example.newsfeed.security.UserDetailsImpl;
 import org.example.newsfeed.service.PostService;
 import org.springframework.data.domain.Page;
@@ -33,9 +34,16 @@ public class PostController {
 
     @GetMapping("{postId}")
     public ResponseEntity getPost(@PathVariable Long postId) {
-        Post post = postService.getPost(postId);
-        PostResponseDTO response = new PostResponseDTO(post);
-        return ResponseEntity.ok(response);
+        ResponseEntity response;
+        try {
+            Post post = postService.getPost(postId);
+            response = ResponseEntity.ok(new PostResponseDTO(post));
+        } catch (PostNotFoundException e) {
+            response = ResponseEntity.ok().body(
+                new ErrorResponseDTO2("403", "게시글 조회에 실패했습니다.", e.getMessage()));
+        }
+
+        return response;
     }
 
 
@@ -50,9 +58,9 @@ public class PostController {
                 .msg("게시글 수정에 성공했습니다")
                 .statusCode(HttpStatus.OK.value())
                 .build());
-        } catch (Exception e) {
+        } catch (InvalidUserException | PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 수정에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "게시글 수정에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -72,9 +80,9 @@ public class PostController {
                 .statusCode(HttpStatus.OK.value())
                 .build());
 
-        } catch (Exception e) {
+        } catch (InvalidUserException | PostNotFoundException e) {
             response = ResponseEntity.ok().body(
-                new ErrorResponseDto("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
+                new ErrorResponseDTO2("403", "게시글 삭제에 실패했습니다.", e.getMessage()));
         }
 
         return response;
@@ -87,5 +95,6 @@ public class PostController {
         @RequestBody(required = false) SearchRequestDTO dto) { //기간
         return postService.getPosts(page - 1, canSearch, dto);
     }
+
 
 }

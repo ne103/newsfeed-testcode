@@ -16,17 +16,18 @@ public class Post extends BaseEntity {
     @Column(nullable = false)
     private Long id;
 
-//    @Column(nullable = false)
-//    private Long userId; // ?
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
+    @JsonBackReference//
     private User user;  // ?
 
     private String content;
 
     private boolean deleted = Boolean.FALSE;
+
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL) //영속성전이
+    private List<Comment> comments = new ArrayList<Comment>();
 
     @Builder
     public Post(User user, String content) {
