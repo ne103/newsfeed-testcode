@@ -10,6 +10,7 @@ import org.example.newsfeed.dto.SearchRequestDTO;
 import org.example.newsfeed.entity.Post;
 import org.example.newsfeed.entity.User;
 import org.example.newsfeed.exception.InvalidUserException;
+import org.example.newsfeed.exception.PostNotFoundException;
 import org.example.newsfeed.repository.PostRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

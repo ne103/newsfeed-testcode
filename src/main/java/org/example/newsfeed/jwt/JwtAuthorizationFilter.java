@@ -31,7 +31,7 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain filterChain) throws ServletException, IOException {
 
         String tokenValue = jwtUtil.getTokenFromRequest(req);
-        if (StringUtils.hasText(tokenValue)&& !req.getRequestURI().startsWith("/api/login")) {
+        if (StringUtils.hasText(tokenValue)&& !req.getRequestURI().startsWith("/api/login") && !req.getRequestURI().startsWith("/api/logout")) {
             // JWT 토큰 substring
             tokenValue = jwtUtil.substringToken(tokenValue);
             log.info(tokenValue);
