@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import org.example.newsfeed.CommonResponse;
 import org.example.newsfeed.dto.CommentRequestDTO;
 import org.example.newsfeed.dto.CommentResponseDTO;
-import org.example.newsfeed.dto.ErrorResponseDTO;
 import org.example.newsfeed.dto.ErrorResponseDTO2;
 import org.example.newsfeed.entity.Comment;
 import org.example.newsfeed.exception.CommentNotFoundException;

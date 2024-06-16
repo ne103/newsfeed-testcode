@@ -1,8 +1,6 @@
 package org.example.newsfeed.config;
 
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
-import org.example.newsfeed.jwt.JwtAuthenticationFilter;
 import org.example.newsfeed.jwt.JwtAuthorizationFilter;
 import org.example.newsfeed.jwt.JwtUtil;
 import org.example.newsfeed.security.UserDetailsServiceImpl;
