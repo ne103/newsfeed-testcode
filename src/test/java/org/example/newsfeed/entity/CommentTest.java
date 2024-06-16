@@ -26,7 +26,7 @@ public class CommentTest {
 
     @Test
     @DisplayName("Comment - Comment 생성 테스트")
-    void testCreateCommentEntity() {
+    void test1() {
         // Given
         // setUp() 메서드에서 주어짐
 
@@ -42,7 +42,7 @@ public class CommentTest {
 
     @Test
     @DisplayName("Comment - 내용 수정 테스트")
-    void testSetContent() {
+    void test2() {
         // Given (setUp() 메서드에서 주어짐)
         assertThat(comment.getContent()).isEqualTo("테스트 코멘트");
 
