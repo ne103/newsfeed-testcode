@@ -13,8 +13,6 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import java.util.ArrayList;
-import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -26,8 +24,6 @@ import org.example.newsfeed.dto.PasswordRequestDTO;
 import org.example.newsfeed.dto.UserRequestDTO;
 import org.example.newsfeed.exception.InvalidPasswordException;
 import org.hibernate.validator.constraints.Length;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
@@ -91,8 +87,7 @@ public class User extends Timestamped{
         }
     }
 
-    public User(String userId, String password, String name, String email, String comment,
-        String refreshToken, String statusChangeTime, UserStatusEnum status) {
+    public User(String userId, String password, String name, String email, String comment, String refreshToken, String statusChangeTime, UserStatusEnum status) {
         this.userId = userId;
         this.password = password;
         this.name = name;

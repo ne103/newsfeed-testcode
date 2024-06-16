@@ -1,6 +1,5 @@
 package org.example.newsfeed.service;
 
-import java.sql.Timestamp;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +18,6 @@ import org.example.newsfeed.jwt.JwtUtil;
 import org.example.newsfeed.repository.UserRepository;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,9 +45,9 @@ public class UserService {
             requestDto.getName(),
             requestDto.getEmail(),
             requestDto.getComment(),
-            "",
-            "",
-            UserStatusEnum.ACTIVE
+            null,  // refreshToken 초기화
+            null,  // statusChangeTime 초기화
+            UserStatusEnum.ACTIVE  // 예시로 ACTIVE 상태로 초기화
         );
 
         registerUser(user);
