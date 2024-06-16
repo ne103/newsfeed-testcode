@@ -41,7 +41,7 @@ public class CommentTest {
     }
 
     @Test
-    @DisplayName("Comment - 내용 수정 테스트")
+    @DisplayName("setContent - 내용 수정 테스트")
     void test2() {
         // Given (setUp() 메서드에서 주어짐)
         assertThat(comment.getContent()).isEqualTo("테스트 코멘트");
