@@ -49,7 +49,7 @@ public class UserTest {
     @DisplayName("User - User 생성 테스트")
     void test2() {
         // Given
-        // setUp()에서 주어짐
+        // setUp() 메서드에서 주어짐
 
         // When
         // 객체가 생성되면서 진행됨
