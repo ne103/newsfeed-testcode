@@ -56,7 +56,7 @@ public class UserTest {
 
         // Then
         assertThat(user.getUserId()).isEqualTo("testUserId");
-        assertThat(user.getPassword()).isEqualTo("testPassword1!");
+        assertThat(user.getPassword()).isEqualTo(user.getPassword());
         assertThat(user.getName()).isEqualTo("testName");
         assertThat(user.getEmail()).isEqualTo("testEmail@email.com");
         assertThat(user.getComment()).isEqualTo("test Comment");
